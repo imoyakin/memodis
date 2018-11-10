@@ -1,0 +1,8 @@
+[[package]]
+name = "memodis"
+version = "0.1.0"
+
+[[package]]
+name = "memodis-cli"
+version = "0.1.0"
+
