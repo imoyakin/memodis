@@ -7,16 +7,16 @@ use serde_derive::Deserialize;
 
 #[derive(Deserialize,Debug)]
 pub struct Config {
-    pub thread_limit: Option<String>,
+    pub thread_limit: i32,
 }
 
 #[derive(Deserialize)]
 #[derive(Debug)]
 pub struct Conf {
-    pub config: Option<Vec<Config>>,
+    pub config: Config,
 }
 
-pub fn read_config() {
+pub fn read_config() ->Conf {
     let file_path = "Config.toml";
     let mut file = match File::open(file_path) {
         Ok(f) =>f,
@@ -29,11 +29,11 @@ pub fn read_config() {
         Err(e) => panic!("Error Reading file:{}", e)
     };
 
-    println!("{:?}", str_val);
-
     let config: Conf = toml::from_str(&str_val).unwrap();
 
-    for x in config.config.unwrap() {
-        println!("{:?}", x);
-    }
+    // for x in config.config.unwrap() {
+    //     println!("{:?}", x);
+    //     println!("{:?}", x.thread_limit);
+    // }
+    return config
 }

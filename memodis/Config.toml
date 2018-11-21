@@ -1,2 +1,2 @@
-[[config]]
-thread_limit="4"
+[config]
+thread_limit=4

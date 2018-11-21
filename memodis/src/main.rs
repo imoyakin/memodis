@@ -1,15 +1,20 @@
+#[macro_use]
+extern crate lazy_static;
+extern crate  crossbeam;
+
 use std::io::Read;
 use std::io::Write;
 use std::thread;
 use std::net::{TcpListener, TcpStream};
 
 mod config;
+mod works;
+mod msg;
 
 fn main() {
-
-    config::read_config();
-
+    let app = config::read_config();
     let listener = TcpListener::bind("127.0.0.1:80").unwrap();
+    works::works_start(app.config.thread_limit);
     for stream in listener.incoming() {
         match stream {
             Err(e) => println!("{:?}", e),
@@ -27,16 +32,9 @@ fn handle_client(mut stream: TcpStream) {
         let mut buf = [0; 4096];
         stream.read(&mut buf).unwrap();
 
-        let command = String::from_utf8_lossy(&buf[..]);
-        let command_split = command.split(" ");
-        for s in command_split {
-            println!("{}", s);
-        }
+        let command = String::from_utf8(buf[..].to_vec()).unwrap();
+        msg::order_channel.0.send(command).unwrap();
 
-        println!("{}", command);
-        let response = "HTTP/1.1 200 OK\r\n\r\n";
-
-        stream.write(response.as_bytes()).unwrap();
         stream.flush().unwrap();
     }
 }
