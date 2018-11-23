@@ -1,3 +1,4 @@
+#![feature(nll)]
 #[macro_use]
 extern crate lazy_static;
 extern crate  crossbeam;
@@ -13,6 +14,7 @@ mod msg;
 
 fn main() {
     let app = config::read_config();
+    msg::inital_message_channel(app.config.thread_limit);
     let listener = TcpListener::bind("127.0.0.1:80").unwrap();
     works::works_start(app.config.thread_limit);
     for stream in listener.incoming() {
