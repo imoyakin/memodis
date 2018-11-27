@@ -3,10 +3,9 @@
 extern crate lazy_static;
 extern crate  crossbeam;
 
-use std::io::Read;
-use std::io::Write;
+use std::io::{Read,Write};
 use std::thread;
-use std::net::{TcpListener, TcpStream};
+use std::net::{Shutdown,TcpListener,TcpStream};
 
 mod config;
 mod works;
@@ -24,19 +23,39 @@ fn main() {
                 thread::spawn(move || {
                     handle_client(stream);
                 });
-            }
+            },
+            // drop(msg::order_channel.0);
         }
     }
+    drop(listener);
 }
 
 fn handle_client(mut stream: TcpStream) {
-    loop {
-        let mut buf = [0; 4096];
-        stream.read(&mut buf).unwrap();
+    let mut buf = [0 as u8; 10240];
+    // while match stream.read(&mut buf) {
+    //     Err(_)=> {
+    //         println!("this stream is stop");
+    //         stream.shutdown(Shutdown::Both).unwrap();
+    //         false
+    //     },
+    //     Ok(0) => {
+    //         println!("this stream is stop");
+    //         stream.shutdown(Shutdown::Both).unwrap();
+    //         false
+    //     }
+    //     Ok(size) => {
+    //         let command = String::from_utf8(buf[0..size].to_vec()).unwrap();
+    //         msg::order_channel.0.send(command).unwrap();
+    //         true
+    //     }
+    // }{}
 
-        let command = String::from_utf8(buf[..].to_vec()).unwrap();
+    while let Ok(size) = stream.read(&mut buf) {
+        if size == 0 {break;}
+        let command = String::from_utf8(buf[0..size].to_vec()).unwrap();
         msg::order_channel.0.send(command).unwrap();
-
-        stream.flush().unwrap();
     }
+    println!("this stream is stopping");
+    stream.shutdown(Shutdown::Both).unwrap();
+    stream.flush().unwrap();
 }

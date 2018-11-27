@@ -1,6 +1,6 @@
 use super::msg;
 use std::thread;
-use crossbeam::crossbeam_channel::{Receiver};
+use crossbeam::crossbeam_channel::{Receiver, RecvError};
 
 pub fn works_start(thread_limit: i32) {
     thread::spawn(move || {
@@ -21,8 +21,11 @@ fn master(thread_limit:i32) {
 
     loop {
         for num in &threadctl {
-            if let Ok(r) = msg::order_channel.1.recv() {
-                let _ = num.send(r);
+            match msg::order_channel.1.recv() {
+                Err(RecvError) => panic!("fuckyou{}", RecvError),
+                Ok(r)=> {
+                    let _ = num.send(r);
+                },
             }
         }
     }
