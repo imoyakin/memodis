@@ -35,5 +35,5 @@ pub fn read_config() ->Conf {
     //     println!("{:?}", x);
     //     println!("{:?}", x.thread_limit);
     // }
-    return config
+    config
 }

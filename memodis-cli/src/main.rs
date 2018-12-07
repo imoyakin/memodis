@@ -7,10 +7,10 @@ fn main() {
 
     loop {
         let mut buf = [0;10];
-        io::stdin().read(&mut buf)
+        let _ = io::stdin().read(&mut buf)
             .expect("Failed to read line");
         //println!("you typed:{}",buf.trim());
-        let _ = stream.write(&mut buf);
+        let _ = stream.write(&buf);
         let _ = stream.read(&mut [0; 4096]);
     }
 }

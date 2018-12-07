@@ -10,6 +10,7 @@ use std::net::{Shutdown,TcpListener,TcpStream};
 mod config;
 mod works;
 mod msg;
+mod cmd;
 
 fn main() {
     let app = config::read_config();
@@ -32,23 +33,6 @@ fn main() {
 
 fn handle_client(mut stream: TcpStream) {
     let mut buf = [0 as u8; 10240];
-    // while match stream.read(&mut buf) {
-    //     Err(_)=> {
-    //         println!("this stream is stop");
-    //         stream.shutdown(Shutdown::Both).unwrap();
-    //         false
-    //     },
-    //     Ok(0) => {
-    //         println!("this stream is stop");
-    //         stream.shutdown(Shutdown::Both).unwrap();
-    //         false
-    //     }
-    //     Ok(size) => {
-    //         let command = String::from_utf8(buf[0..size].to_vec()).unwrap();
-    //         msg::order_channel.0.send(command).unwrap();
-    //         true
-    //     }
-    // }{}
 
     while let Ok(size) = stream.read(&mut buf) {
         if size == 0 {break;}

@@ -1,4 +1,5 @@
 use super::msg;
+use super::cmd;
 use std::thread;
 use crossbeam::crossbeam_channel::{Receiver, RecvError};
 
@@ -44,11 +45,18 @@ fn works(thread_num: i32) {
     loop {
         match rx.recv() {
             Err(r) => panic!("what happen?{}",r),
-            Ok(r) => println!("{} + {}", r, thread_num)
+            Ok(r) => {
+                let mut iter = r.split(" ");
+                let order = iter.next().expect("first partation must exists");
+                let v = cmd::command.get::<str>(&order);
+                match v {
+                    Some(s) => s.run(),
+                    None => println!("err"),
+                }
+            }
         }
     }
 }
-
 // fn works(thread_num: i32) {
 //     let rx: Receiver<String>;
 //     {
