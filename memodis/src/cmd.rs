@@ -1,14 +1,14 @@
 use std::collections::HashMap;
 
 pub struct MemodisCommand {
-    pub commamd_proc: fn(),
+    pub commamd_proc: fn(data: &Vec<&str>),
     pub arity: i32,
     pub flag: i32,
     pub microseconds: f64,
 }
 
 impl MemodisCommand {
-    fn new(commamd_proc:fn()) -> MemodisCommand {
+    fn new(commamd_proc:fn(data: &Vec<&str>)) -> MemodisCommand {
         let s = MemodisCommand {
             commamd_proc:commamd_proc,
             arity:1,
@@ -18,20 +18,22 @@ impl MemodisCommand {
         s
     }
 
-    pub fn run(&self) {
-        (self.commamd_proc)();
+    pub fn run(&self, data: &Vec<&str>) {
+        (self.commamd_proc)(data);
     }
 }
 
 lazy_static! {
-    pub static ref command: HashMap<String, MemodisCommand> = {
+    pub static ref command: HashMap<&'static str, MemodisCommand> = {
         let mut cmap = HashMap::new();
-        cmap.insert("GET".to_string(), MemodisCommand::new(test));
-        cmap.insert("SET".to_string(), MemodisCommand::new(test));
+        cmap.insert("GET", MemodisCommand::new(test));
+        cmap.insert("SET", MemodisCommand::new(test));
         cmap
     };
 }
 
-fn test() {
-    println!("test");
+fn test(data: &Vec<&str>) {
+    for i in data {
+        println!("{:?}", i);
+    }
 }

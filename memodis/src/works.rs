@@ -46,11 +46,11 @@ fn works(thread_num: i32) {
         match rx.recv() {
             Err(r) => panic!("what happen?{}",r),
             Ok(r) => {
-                let mut iter = r.split(" ");
-                let order = iter.next().expect("first partation must exists");
-                let v = cmd::command.get::<str>(&order);
+                let command = r.split(" ").collect::<Vec<_>>();
+                // let order = iter.next().expect("first partation must exists");
+                let v = cmd::command.get::<str>(&command[0]);
                 match v {
-                    Some(s) => s.run(),
+                    Some(s) => s.run(&command),
                     None => println!("err"),
                 }
             }
