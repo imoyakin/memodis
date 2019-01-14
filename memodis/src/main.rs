@@ -10,10 +10,17 @@ mod config;
 mod works;
 mod msg;
 mod cmd;
+mod init;
+mod memodis;
+mod dict;
 
 fn main() {
     let app = config::read_config();
     msg::inital_message_channel(app.config.thread_limit);
+
+    //initialize db
+    init::init();
+
     let listener = TcpListener::bind("127.0.0.1:80").unwrap();
     works::works_start(app.config.thread_limit);
     for stream in listener.incoming() {
