@@ -13,6 +13,7 @@ mod cmd;
 mod init;
 mod memodis;
 mod dict;
+mod obj;
 
 fn main() {
     let app = config::read_config();
@@ -31,7 +32,7 @@ fn main() {
                     handle_client(stream);
                 });
             },
-            // drop(msg::order_channel.0);
+            // drop(msg::ORDER_CHANNEL.0);
         }
     }
     drop(listener);
@@ -42,8 +43,8 @@ fn handle_client(mut stream: TcpStream) {
 
     while let Ok(size) = stream.read(&mut buf) {
         if size == 0 {break;}
-        let command = String::from_utf8(buf[0..size].to_vec()).unwrap();
-        msg::order_channel.0.send(command).unwrap();
+        let clientmsg = msg::OrderChannelMsg::new(String::from_utf8(buf[0..size].to_vec()).unwrap(),stream.peer_addr().unwrap());
+        msg::ORDER_CHANNEL.0.send(clientmsg).unwrap();
     }
     println!("this stream is stopping");
     stream.shutdown(Shutdown::Both).unwrap();

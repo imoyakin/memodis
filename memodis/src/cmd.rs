@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use super::memodis;
 
 pub struct MemodisCommand {
     pub commamd_proc: fn(data: &Vec<&str>),
@@ -9,13 +10,12 @@ pub struct MemodisCommand {
 
 impl MemodisCommand {
     fn new(commamd_proc:fn(data: &Vec<&str>)) -> MemodisCommand {
-        let s = MemodisCommand {
+        MemodisCommand {
             commamd_proc:commamd_proc,
             arity:1,
             flag:1,
             microseconds:1f64,
-        };
-        s
+        }
     }
 
     pub fn run(&self, data: &Vec<&str>) {
@@ -24,10 +24,10 @@ impl MemodisCommand {
 }
 
 lazy_static! {
-    pub static ref command: HashMap<&'static str, MemodisCommand> = {
+    pub static ref COMMAND: HashMap<&'static str, MemodisCommand> = {
         let mut cmap = HashMap::new();
-        cmap.insert("GET", MemodisCommand::new(test));
-        cmap.insert("SET", MemodisCommand::new(test));
+        cmap.insert("GET", MemodisCommand::new(get));
+        cmap.insert("SET", MemodisCommand::new(set));
         cmap
     };
 }
@@ -36,4 +36,16 @@ fn test(data: &Vec<&str>) {
     for i in data {
         println!("{:?}", i);
     }
+}
+
+fn get(data: &Vec<&str>) {
+    
+}
+
+fn set(data: &Vec<&str>) {
+    //假设DB现在是1
+    for i in data {
+        
+    }
+    
 }
