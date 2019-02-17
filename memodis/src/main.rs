@@ -11,9 +11,7 @@ mod works;
 mod msg;
 mod cmd;
 mod init;
-mod memodis;
-mod dict;
-mod obj;
+mod Model;
 
 fn main() {
     let app = config::read_config();

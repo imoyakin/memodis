@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use super::memodis;
 
 pub struct MemodisCommand {
     pub commamd_proc: fn(data: &Vec<&str>),

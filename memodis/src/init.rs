@@ -1,9 +1,9 @@
-use super::memodis;
+use crate::Model::db;
 
 pub fn init() {
     //read file
 
     //initail database
-    let db = memodis::Memodisdb::new(1);
+    let db = db::MemodisDB::new(1);
     
 }
