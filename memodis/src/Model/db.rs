@@ -1,4 +1,4 @@
-use crate::Model::dict;
+use crate::model::dict;
 
 pub struct MemodisDB {
     //数据库键空间，保持存折数据库中的所有键值对

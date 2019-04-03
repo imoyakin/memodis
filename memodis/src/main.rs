@@ -1,34 +1,40 @@
+#![feature(nll)]
 #[macro_use]
 extern crate lazy_static;
 extern crate  crossbeam;
 
 use std::io::{Read,Write};
 use std::thread;
-use std::net::{Shutdown,TcpListener,TcpStream};
+use std::net::{Shutdown, TcpListener,TcpStream};
+use std::sync::Arc;
+use std::sync::Mutex;
+use std::sync::RwLock;
+use std::rc::Rc;
 
 mod config;
 mod works;
-mod msg;
 mod cmd;
 mod init;
-mod Model;
+mod model;
 
 fn main() {
     let app = config::read_config();
-    msg::inital_message_channel(app.config.thread_limit);
-
+    model::msg::inital_message_channel(app.config.thread_limit);
+    works::works_start(app.config.thread_limit);
     //initialize db
-    init::init();
+    init::init(app.config);
 
     let listener = TcpListener::bind("127.0.0.1:80").unwrap();
-    works::works_start(app.config.thread_limit);
+    
     for stream in listener.incoming() {
         match stream {
-            Err(e) => println!("{:?}", e),
+            Err(e) => println!("????{:?}", e),
             Ok(stream) => {
-                thread::spawn(move || {
+                let thread = thread::spawn(move || {
                     handle_client(stream);
                 });
+
+                //thread.join().ok();
             },
             // drop(msg::ORDER_CHANNEL.0);
         }
@@ -38,13 +44,24 @@ fn main() {
 
 fn handle_client(mut stream: TcpStream) {
     let mut buf = [0 as u8; 10240];
-
-    while let Ok(size) = stream.read(&mut buf) {
+    let s = Arc::new(Mutex::new(stream));
+    while let Ok(size) = s.lock().unwrap().read(&mut buf) {
         if size == 0 {break;}
-        let clientmsg = msg::OrderChannelMsg::new(String::from_utf8(buf[0..size].to_vec()).unwrap(),stream.peer_addr().unwrap());
-        msg::ORDER_CHANNEL.0.send(clientmsg).unwrap();
+        let clientmsg = model::msg::OrderChannelMsg::new(
+            String::from_utf8(buf[0..size].to_vec()).unwrap(), 
+            s.clone());
+        model::msg::ORDER_CHANNEL.0.send(clientmsg).unwrap();
     }
+    // while let Ok(size) = s.write(&mut buf).unwrap() {
+    //     if size == 0 {break;}
+    //     let clientmsg = model::msg::OrderChannelMsg::new(
+    //         String::from_utf8(buf[0..size].to_vec()).unwrap(), 
+    //         s.clone());
+    //     model::msg::ORDER_CHANNEL.0.send(clientmsg).unwrap();
+    // }
+
     println!("this stream is stopping");
-    stream.shutdown(Shutdown::Both).unwrap();
-    stream.flush().unwrap();
+    // let mut l = s.lock().unwrap();
+    // l.shutdown(Shutdown::Both).unwrap();
+    // l.flush().unwrap();
 }

@@ -1,4 +1,4 @@
-use crate::Model::db::MemodisDB;
+use crate::model::db::MemodisDB;
 
 ///MemodisClient
 ///

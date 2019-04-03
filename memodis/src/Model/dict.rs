@@ -74,6 +74,7 @@ impl CURD for Dict{
     }
 
     fn Delete(&self, key: String)->bool {
+        //todo
         true 
     }
 }

@@ -1,5 +1,5 @@
-use super::msg;
-use super::cmd;
+use crate::model::msg;
+use crate::cmd;
 use std::thread;
 use crossbeam::crossbeam_channel::{Receiver, RecvError};
 
@@ -50,30 +50,11 @@ fn works(thread_num: i32) {
                 // let order = iter.next().expect("first partation must exists");
                 let v = cmd::COMMAND.get::<str>(&command[0]);
                 match v {
-                    Some(s) => s.run(&command),
-                    None => println!("err"),
+                    Some(s) => s.run(&r),
+                    None => println!("works err"),
                 }
+                // msg::
             }
         }
     }
 }
-// fn works(thread_num: i32) {
-//     let rx: Receiver<String>;
-//     {
-//         let ss = msg::MESSAGE_CHANNEL.lock().unwrap();
-//         let channel = ss.get(&thread_num);
-//         //let channel = msg::MESSAGE_CHANNEL.lock().unwrap().get(&thread_num);
-//         match channel {
-//             None => panic!("can not get MESSAGE_CHANNEL!"),
-//             Some((_sender, receiver)) => rx = receiver.clone(),
-//             // Some((_Sender, Receiver)) => {
-//             //     while let Ok(r) = Receiver.recv() {
-//             //         println!("{}", r);
-//             //     }
-//             // }
-//         }
-//     }
-//     while let Ok(r) = rx.recv() {
-//         println!("{}", r);
-//     }
-// }

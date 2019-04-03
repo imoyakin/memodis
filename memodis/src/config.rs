@@ -8,6 +8,7 @@ use serde_derive::Deserialize;
 #[derive(Deserialize,Debug)]
 pub struct Config {
     pub thread_limit: i32,
+    pub database_num: i32,
 }
 
 #[derive(Deserialize)]
